@@ -1,0 +1,64 @@
+body{
+    
+font-family: Helvetica, Arial, sans-serif;
+font-size: 1.2em;
+}
+
+#button1 {
+    background-color: rgba(18, 170, 74, 0.797);
+    font-size: medium;
+}
+#box1{
+font-size: larger;
+text-align: center;
+border: auto;
+width: auto;
+height: auto;
+font-size: large;
+padding: auto;
+margin-top: auto;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: auto;
+
+}
+#box2{
+font-size: larger;
+text-align: center;
+border: auto;
+width: auto;
+height: auto;
+font-size: large;
+padding: auto;
+margin-top: auto;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: auto;
+
+}
+#box3{
+text-align: center;
+border: auto;
+width: auto;
+height: auto;
+font-size: large;
+padding: auto;
+margin-top: auto;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: auto;
+
+}
+#p2box1{
+text-align: center;
+border: auto;
+width: auto;
+height: auto;
+font-size: large;
+padding: auto;
+margin-top: auto;
+margin-left: auto;
+margin-right: auto;
+margin-bottom: auto;
+
+}
