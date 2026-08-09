@@ -1,8 +1,16 @@
 body{
-    
+
+background: url(backgroundimage.JPG) ;
 font-family: Helvetica, Arial, sans-serif;
 font-size: 1.2em;
 }
+
+.stickygram {
+margin-left: 87%;
+position: sticky;
+top: 20px;
+}
+
 
 #button1 {
     background-color: rgba(18, 170, 74, 0.797);
