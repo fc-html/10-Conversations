@@ -6,14 +6,17 @@ font-size: 1.2em;
 }
 
 .stickygram {
-margin-left: 87%;
+margin-left: 73%;
 position: sticky;
 top: 20px;
+right: 0;
+z-index: 9999;
+
 }
 
 
 #button1 {
-    background-color: rgba(18, 170, 74, 0.797);
+    background-color: rgba(18, 155, 170, 0.797);
     font-size: medium;
 }
 #box1{

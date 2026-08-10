@@ -5,13 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collab!</title>
     <link rel="stylesheet" href="style.css">
+
+
+
+      <title>Recorder App</title>
 </head>
 <body>
- <br><br><br>
+    <div class="stickygram"> 
+<a href="https://www.instagram.com/pontooooon/" 
+target="_blank"
+title="find our instagram"> 
+instagram 
+</a>
+</div>
  <br><br><br>
 <div id="p2box1">
     <h1>Collaborate<sup>!</sup></h1>
-    <br>
     <p>record <sup><mark>something</mark></sup></p>
+
+<br>
+
+<div id="box2"> 
+    <p>idea <sup>0001</sup></p>
+    <audio 
+    controls loop src="music/backwards jono .wav">
+    </audio>
+  <h2></h2>
+  <p>
+    <button type="button" id="record">record</button>
+    <button type="button" id="stopRecord" disabled>stop</button>
+  </p>
+  <p>
+    <audio id="recordedAudio"></audio>        
+  </p>
+
+  <script> 
+    navigator.mediaDevices.getUserMedia({audio:true})
+    .then(stream => {handlerFunction(stream)})
+
+    function handlerFunction(stream) {
+      rec = new MediaRecorder(stream);
+      rec.ondataavailable = e => {
+        audioChunks.push(e.data);
+        if (rec.state == "inactive"){
+          let blob = new Blob(audioChunks,{type:'audio/mp3'});
+          recordedAudio.src = URL.createObjectURL(blob);
+          recordedAudio.controls=true;
+          recordedAudio.autoplay=true;
+          sendData(blob)
+          }
+        }
+      }
+    
+    function sendData(data) {}
+      record.onclick = e => {
+        record.disabled = true;
+        record.style.backgroundColor = "Pink"
+        stopRecord.disabled=false;
+        audioChunks = [];
+        rec.start();
+        }
+      stopRecord.onclick = e => {
+        record.disabled = false;
+        stopRecord.disabled=true;
+        record.style.backgroundColor = "red"
+        rec.stop();
+        }
+  </script>
+
+
+<br>
+
+
+
+</main>
+
+<!-- master button -->
+<button onclick="playBothAudios()">play together</button>
+
+<script>
+function playBothAudios() {
+  const audio1 = document.querySelector('audio[src="music/backwards jono .wav"]');
+  const audio2 = document.getElementById('recordedAudio');
+
+  if (audio1) audio1.play();
+  if (audio2) audio2.play();
+}
+</script>
+
+<br> <br>
+<a href="page3.html"
+title="go to the next window">
+<button id="button1">mix</button>
+</a>
+
+
+
+
+
+
 </body>
 </html>
