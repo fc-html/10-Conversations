@@ -81,7 +81,10 @@ instagram
 </main>
 
 <!-- master button -->
-<button onclick="playBothAudios()">play together</button>
+<button  id="playAllBtn" class="playAllBtn.button">play from start</button>
+<button class="pause button" onclick="pauseBothAudios()">pause</button>
+<button class="play button" onclick="playBothAudios()">play</button>
+
 
 <script>
 function playBothAudios() {
@@ -91,16 +94,42 @@ function playBothAudios() {
   if (audio1) audio1.play();
   if (audio2) audio2.play();
 }
+
+function pauseBothAudios() {
+  const audio1 = document.querySelector('audio[src="music/backwards jono .wav"]');
+  const audio2 = document.getElementById('recordedAudio');
+
+  if (audio1) audio1.pause();
+  if (audio2) audio2.pause();
+}
+
+const playBtn = document.getElementById('playAllBtn');
+
+playBtn.addEventListener('click', () => {
+  const audio1 = document.querySelector('audio[src="music/backwards jono .wav"]');
+  const audio2 = document.getElementById('recordedAudio');
+
+  if (audio1) audio1.currentTime = 0;
+  if (audio2) audio2.currentTime = 0;
+
+  if (audio1) audio1.play();
+  if (audio2) audio2.play();
+});
+
 </script>
 
-<br> <br>
+<br><br>
 <a href="page3.html"
 title="go to the next window">
+<br><br>
 <button id="button1">mix</button>
 </a>
 
 
-
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<br><br><br>
 
 
 
