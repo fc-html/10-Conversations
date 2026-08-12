@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <style>
+        body {
+            color: black;
+        }
+   </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collab!</title>
@@ -28,6 +33,7 @@ instagram
 <div id="box2"> 
     <p>idea <sup>0001</sup></p>
     <audio 
+    id="backtrack"
     controls loop src="music/backwards jono .wav">
     </audio>
   <h2></h2>
@@ -36,7 +42,7 @@ instagram
     <button type="button" id="stopRecord" disabled>stop</button>
   </p>
   <p>
-    <audio id="recordedAudio"></audio>        
+    <audio controls id="recordedAudio"></audio>        
   </p>
 
   <script> 
@@ -52,6 +58,7 @@ instagram
           recordedAudio.src = URL.createObjectURL(blob);
           recordedAudio.controls=true;
           recordedAudio.autoplay=true;
+
           sendData(blob)
           }
         }
@@ -64,6 +71,8 @@ instagram
         stopRecord.disabled=false;
         audioChunks = [];
         rec.start();
+        const back = document.getElementById('backtrack');
+        if (back) back.play();
         }
       stopRecord.onclick = e => {
         record.disabled = false;
@@ -124,13 +133,6 @@ title="go to the next window">
 <br><br>
 <button id="button1">mix</button>
 </a>
-
-
-<br><br><br>
-<br><br><br>
-<br><br><br>
-<br><br><br>
-
 
 
 </body>
