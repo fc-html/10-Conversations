@@ -22,6 +22,13 @@ z-index: 9999;
     font-size: large;
      color: black;
 }
+
+
+#downloadBtn {
+    background-color: rgb(0, 254, 224);
+    font-size: medium;
+     color: black;
+}
 #box1{
 font-size: larger;
 text-align: center;
@@ -100,19 +107,63 @@ margin-bottom: auto;
     font-size: medium;
      color: black;
 }
-#myRange {
 
+#fileButton {
+display:
+}
+
+#fileLabel {
+width: 70%;
+background-color: rgb(255, 0, 123);
+font-size: medium;
 color: black;
-width: 100%;
+
 }
 
-input {
-display: none;
+#fileInput {
+width: 70%;
+    background-color: hsl(336, 100%, 50%);
+    font-size: medium;
+     color: black;
+
 }
+
+#fileInput
+
 label {
+display: none;
 height: 400px;
 width: 200px;
+font-size: 18px;
 border-radius: 5px;
 border: dashed 2px #72716c;
  color: black;
+}
+
+#speedRange {
+width: 70%;
+height: 7px;
+}
+
+#pitchRange {
+width: 70%;
+height: 7px;
+}
+
+
+#reverbRange {
+width: 70%;
+height: 7px;
+}
+
+
+#delayRange {
+width: 70%;
+height: 7px;
+}
+
+
+#gainRange {
+width: 70%;
+height: 7px;
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
    <style>
         body {
             color: black;
@@ -27,9 +28,7 @@ instagram
 <div id="p2box1">
     <h1>Collaborate<sup>!</sup></h1>
     <p>record <sup><mark>something</mark></sup></p>
-
 <br>
-
 <div id="box2"> 
     <p>idea <sup>0001</sup></p>
     <audio 
@@ -64,7 +63,12 @@ instagram
         }
       }
     
-    function sendData(data) {}
+    function sendData(data) {
+      const downloadLink = document.getElementById('downloadLink');
+      if (downloadLink) {
+        downloadLink.href = URL.createObjectURL(data);
+      }
+    }
       record.onclick = e => {
         record.disabled = true;
         record.style.backgroundColor = "Pink"
@@ -84,10 +88,6 @@ instagram
 
 
 <br>
-
-
-
-</main>
 
 <!-- master button -->
 <button  id="playAllBtn" class="playAllBtn.button">play from start</button>
@@ -123,17 +123,54 @@ playBtn.addEventListener('click', () => {
 
   if (audio1) audio1.play();
   if (audio2) audio2.play();
+
 });
+
+const handleSave = async () => {
+  const audioBlob = await fetch(recordedAudio.src).then(r => r.blob());
+  const audioFile = new File([audioBlob], 'mycoolidea.wav', { type: 'audio/wav' });
+  const formData = new FormData();
+  formData.append('file', audioFile);
+
+  onSave(formData);
+};
+
+function downloadRecording() {
+  const audioElement = document.getElementById('recordedAudio');
+  const audioSrc = audioElement.src;
+
+  const downloadBtn = document.getElementById('downloadBtn');
+  downloadBtn.addEventListener('click', () => {
+    downloadRecording();
+  });
+
+  if (audioSrc) {
+    const link = document.createElement('a');
+    link.href = audioSrc;
+    link.download = 'mycoolidea.wav';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    console.error('No recorded audio available for download.');
+  }
+}
+
 
 </script>
 
-<br><br>
+<a href="recordedAudio" download="mycoolidea.wav">
+  <button id="downloadBtn">download recording</button>
+</a>
+
 <a href="page3.html"
 title="go to the next window">
 <br><br>
-<button id="button1">mix</button>
+<button id="button1">mix!</button>
 </a>
 
-
+<br><br><br>
+<br><br><br>
+<br><br><br>
 </body>
 </html>

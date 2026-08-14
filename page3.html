@@ -26,8 +26,8 @@ instagram
     <br>
 
 <!-- drag and drop -->
-<input type="file" id="fileInput" accept="audio/*">
-<label for="fileInput" id="fileLabel">choose audio file</label>
+<input type="file" id="fileInput" accept="audio/wav, audio/mpeg, audio/mp3, audio/ogg, audio/flac, audio/aac, audio/webm, audio/x-wav, audio/x-m4a">
+<label for="fileInput" id="fileLabel"></label>
 <br><br>
 </script>
 
@@ -70,11 +70,12 @@ playBtn.addEventListener('click', () => {
   if (fileinput) fileinput.play();
 });
 
-const context = new AudioContext();
+const context = new (window.AudioContext || window.webkitAudioContext)();
 
 
 // file upload thing then play it
 const audioupload = document.getElementById('fileInput');
+audioupload.setAttribute('accept', 'audio/wav, audio/mpeg, audio/mp3, audio/ogg, audio/flac, audio/aac, audio/webm, audio/x-wav, audio/x-m4a');
 audioupload.addEventListener('change', function() {
   const file = this.files[0];
   if (file) {
@@ -84,51 +85,162 @@ audioupload.addEventListener('change', function() {
     fileAudio.play();
   }
 });
-
-
- 
 const speedNode = context.createBufferSource();
-const pitchNode = context.createBiquadFilter();
+
 const reverbNode = context.createConvolver();
 const delayNode = context.createDelay();
+const delayGain = context.createGain();
 const gainNode = context.createGain();
+
+const backwardsjonoElement = document.getElementById('backwardsjono');
+const fileinputElement = document.getElementById('fileinput');
+
+const convolver = context.createConvolver();
+const wetGain = context.createGain();
+const dryGain = context.createGain();
+const pitchNode = context.createBiquadFilter();
+
+delayNode.delayTime.value = 0;
+delayGain.gain.value = 0;
+
+if (fileinputElement) {
+  const fileSource = context.createMediaElementSource(fileinputElement);
+  fileSource.connect(context.destination);
+  fileSource.connect(delayNode);
+  delayNode.connect(delayGain);
+  delayGain.connect(context.destination);
+}
+
 </script>
 
 
-<input type="range" id="speedRange" min="0.5" max="2" step="0.01" value="1"> 
-speed
-<span id="speedValue"></span>
+
+<!--slider for pitch, reverb, delay, gain -->
+
+<div>
+<p> speed</p>
+<input type="range" id="speedRange" min="0" max="2" step="0.01" value="0"> 
+<span id="speedValue"></span> 
+</div>
+
+<div>
+<p> pitch</p>
+<input type="range" id="pitchRange" min="0.5" max="2" step="0.01" value="1"> 
+<span id="pitchValue">1.00</span> 
+</div>
+
+
+<div>
+<p> reverb</p>
+<input type="range" id="reverbRange" min="0" max="2" step="0.01" value="0"> 
+<span id="reverbValue"></span> 
+</div>
+
+<div>
+<p>delay</p>
+<input type="range" id="delayRange" min="0" max="2" step="0.01" value="0"> 
+<span id="delayValue"></span> 
+</div>
+
+
+
 <script>
+
+let audioCtx;
+        let source;
+
+        function initAudio() {
+            if (audioCtx) return;
+            
+          
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+           
+           source = audioCtx.createMediaElementSource(audio);
+            
+            
+            source.connect(audioCtx.destination);
+        }
 
 const speedSlider = document.getElementById('speedRange');
 const speedValue = document.getElementById('speedValue');
+
+const pitchSlider = document.getElementById('pitchRange');
+const pitchValue = document.getElementById('pitchValue');
+
+const reverbSlider = document.getElementById('reverbRange');
+const reverbValue = document.getElementById('reverbValue');
+
+const delaySlider = document.getElementById('delayRange');
+const delayValue = document.getElementById('delayValue');
+
+
 speedSlider.addEventListener('input', function() {
   const speed = parseFloat(speedSlider.value);
   speedValue.textContent = speed.toFixed(2);
   if (backwardsjono) backwardsjono.playbackRate = speed;
   if (fileinput) fileinput.playbackRate = speed;
 });
+
+pitchSlider.addEventListener('input', function() {
+  const pitch = parseFloat(pitchSlider.value);
+  pitchValue.textContent = pitch.toFixed(2);
+  if (backwardsjono) {
+    backwardsjono.playbackRate = pitch;
+    backwardsjono.preservesPitch = false;
+  }
+  if (fileinput) {
+    fileinput.playbackRate = pitch;
+    fileinput.preservesPitch = false;
+  }
+});
+
+reverbSlider.addEventListener('input', (e) => {
+  const mix = parseFloat(e.target.value);
+  reverbValue.textContent = `${Math.round(mix * 100)}%`;
+  if (wetGain && dryGain && context) {
+    wetGain.gain.setValueAtTime(1 - mix, context.currentTime);
+    dryGain.gain.setValueAtTime(1 - mix, context.currentTime);
+  }
+});
+
+if (delaySlider) {
+  delaySlider.addEventListener('input', function() {
+    const delay = parseFloat(delaySlider.value || 0);
+    if (delayValue) {
+      delayValue.textContent = delay.toFixed(2);
+    }
+    delayNode.delayTime.setValueAtTime(delay, context.currentTime);
+    delayGain.gain.setValueAtTime(delay > 0 ? 0.2 : 0, context.currentTime);
+    delayNode.delayTime.setValueAtTime(delay > 0 ? delay : 2, context.currentTime);
+    gainNode.connect(delayNode);
+    delayNode.connect(context.destination);
+  });
+}
+
+wetGain.gain.setValueAtTime(50, context.currentTime);
+
+backwardsjonoElement.addEventListener('play', () => {
+  if (context.state === 'suspended') {
+    context.resume();
+  }
+});
+
+fileinputElement.addEventListener('play', () => {
+  if (context.state === 'suspended') {
+    context.resume();
+  }
+});
+
+
+
+
+
 </script>
+<br>
 
+<br><br>
 
-  <div class="slidecontainerpitch">
-  <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
-  <p>pitch</p>
-</div>
-
-<div class="slidecontainerreverb">
-  <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
-  <p>reverb</p>
-</div>
-
- <div class="slidecontainerdelay">
-  <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
-  <p>delay</p>
-</div>
-
-<div class="slidecontainerreverse">
-  <input type="range" min="0" max="100" value="50" class="slider" id="myRange">
-  <p>reverse it</p>
 
 
 
@@ -137,6 +249,8 @@ speedSlider.addEventListener('input', function() {
 
 <div>
 <br>
+<a
+href="destination" download="my_creation.wav">download mix!</a>
 <br><br>
 <a href="index.html"
 title="back to the start">
@@ -151,3 +265,23 @@ title="back to the start">
 
 </body>
 </html>
+
+
+
+
+
+
+<!-- const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener('click', () => {
+  const audio2 = document.getElementById('recordedAudio');
+  if (audio2) {
+    const blob = new Blob([audio2.src], { type: 'audio/wav' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mycoolidea.wav';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+});
