@@ -32,9 +32,6 @@ function handleAudiofiles(fileOrBlob) {
 
 
 
-
-
-
 const source = audioContext.createMediaElementSource(audio);
 
 source.connect(audioContext.destination);

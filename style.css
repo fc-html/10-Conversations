@@ -140,10 +140,7 @@ border: dashed 2px #72716c;
  color: black;
 }
 
-#speedRange {
-width: 70%;
-height: 7px;
-}
+
 
 #pitchRange {
 width: 70%;
@@ -152,6 +149,7 @@ height: 7px;
 
 
 #reverbRange {
+display: none;
 width: 70%;
 height: 7px;
 }
@@ -164,6 +162,18 @@ height: 7px;
 
 
 #gainRange {
+width: 70%;
+height: 7px;
+}
+
+#driveRange {
+    display: none;
+width: 70%;
+height: 7px;
+}
+
+
+#reverseRange {
 width: 70%;
 height: 7px;
 }

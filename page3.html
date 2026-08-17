@@ -117,11 +117,6 @@ if (fileinputElement) {
 
 <!--slider for pitch, reverb, delay, gain -->
 
-<div>
-<p> speed</p>
-<input type="range" id="speedRange" min="0" max="2" step="0.01" value="0"> 
-<span id="speedValue"></span> 
-</div>
 
 <div>
 <p> pitch</p>
@@ -129,9 +124,10 @@ if (fileinputElement) {
 <span id="pitchValue">1.00</span> 
 </div>
 
+<!-- verb--> 
 
 <div>
-<p> reverb</p>
+<p> </p>
 <input type="range" id="reverbRange" min="0" max="2" step="0.01" value="0"> 
 <span id="reverbValue"></span> 
 </div>
@@ -142,6 +138,20 @@ if (fileinputElement) {
 <span id="delayValue"></span> 
 </div>
 
+
+<!-- drive--> 
+
+<div>
+<p></p>
+<input type="range" id="driveRange" min="0" max="2" step="0.01" value="0"> 
+<span id="driveValue"></span> 
+</div>
+
+<div>
+<p>reverse</p>
+<input type="range" id="reverseRange" min="0" max="2" step="1" value="50%"> 
+<span id="reverseValue"></span> 
+</div>
 
 
 <script>
@@ -162,8 +172,6 @@ let audioCtx;
             source.connect(audioCtx.destination);
         }
 
-const speedSlider = document.getElementById('speedRange');
-const speedValue = document.getElementById('speedValue');
 
 const pitchSlider = document.getElementById('pitchRange');
 const pitchValue = document.getElementById('pitchValue');
@@ -174,13 +182,13 @@ const reverbValue = document.getElementById('reverbValue');
 const delaySlider = document.getElementById('delayRange');
 const delayValue = document.getElementById('delayValue');
 
+const driveSlider = document.getElementById('driveRange');
+const driveValue = document.getElementById('driveValue');
 
-speedSlider.addEventListener('input', function() {
-  const speed = parseFloat(speedSlider.value);
-  speedValue.textContent = speed.toFixed(2);
-  if (backwardsjono) backwardsjono.playbackRate = speed;
-  if (fileinput) fileinput.playbackRate = speed;
-});
+const reverseSlider = document.getElementById('reverseRange');
+const reverseValue = document.getElementById('reverseValue');
+
+
 
 pitchSlider.addEventListener('input', function() {
   const pitch = parseFloat(pitchSlider.value);
@@ -195,14 +203,33 @@ pitchSlider.addEventListener('input', function() {
   }
 });
 
-reverbSlider.addEventListener('input', (e) => {
-  const mix = parseFloat(e.target.value);
-  reverbValue.textContent = `${Math.round(mix * 100)}%`;
-  if (wetGain && dryGain && context) {
-    wetGain.gain.setValueAtTime(1 - mix, context.currentTime);
-    dryGain.gain.setValueAtTime(1 - mix, context.currentTime);
-  }
-});
+// reverb slider
+
+if (reverbSlider) {
+  reverbSlider.addEventListener('input', function() {
+    const mix = parseFloat(reverbSlider.value || 0);
+    if (reverbValue) {
+      reverbValue.textContent = `${Math.round(mix * 100)}%`;
+    }
+    if (wetGain && context) {
+      const g = Math.max(0, Math.min(1, mix));
+      wetGain.gain.setValueAtTime(g, context.currentTime);
+    }
+  });
+
+  if (wetGain && context) wetGain.gain.setValueAtTime(0.5, context.currentTime);
+
+  backwardsjonoElement.addEventListener('play', () => {
+    if (context.state === 'suspended') context.resume();
+  });
+
+  fileinputElement.addEventListener('play', () => {
+    if (context.state === 'suspended') context.resume();
+  });
+
+}
+
+// delay
 
 if (delaySlider) {
   delaySlider.addEventListener('input', function() {
@@ -210,11 +237,12 @@ if (delaySlider) {
     if (delayValue) {
       delayValue.textContent = delay.toFixed(2);
     }
-    delayNode.delayTime.setValueAtTime(delay, context.currentTime);
-    delayGain.gain.setValueAtTime(delay > 0 ? 0.2 : 0, context.currentTime);
-    delayNode.delayTime.setValueAtTime(delay > 0 ? delay : 2, context.currentTime);
-    gainNode.connect(delayNode);
-    delayNode.connect(context.destination);
+    if (delayNode && context) {
+      delayNode.delayTime.setValueAtTime(delay, context.currentTime);
+    }
+    if (delayGain && context) {
+      delayGain.gain.setValueAtTime(delay > 0 ? 0.5 : 0, context.currentTime);
+    }
   });
 }
 
@@ -232,6 +260,69 @@ fileinputElement.addEventListener('play', () => {
   }
 });
 
+// dirve 
+
+const distortionGainNode = context.createGain();
+const distortionNode = context.createWaveShaper();
+
+function makeDistortionCurve(k = 50) {
+  const n_samples = 44100;
+  const curve = new Float32Array(n_samples);
+  for (let i = 0; i < n_samples; i++) {
+    const x = (i * 2) / n_samples - 1;
+    curve[i] = (Math.atan(k * x) / Math.atan(k));
+  }
+  return curve;
+}
+
+distortionNode.curve = makeDistortionCurve(50);
+
+if (driveSlider) {
+  driveSlider.addEventListener('input', function(event) {
+    const drive = parseFloat(driveSlider.value || 0);
+    if (driveValue) {
+      driveValue.textContent = drive.toFixed(2);
+  
+    }
+    distortionNode.curve = makeDistortionCurve(drive * 100);
+    
+  });
+}
+
+// reverse slider
+
+
+    request = new XMLHttpRequest();
+reverseSlider.open('GET', fileinput, true);
+reverseSlider.open('GET', backwardsjono, true);
+reverseSlider.responseType = 'arraybuffer';
+reverseSlider.addEventListener('load', function(){
+    context.decodeAudioData(request.response, function(buffer){
+        var source = context.createBufferSource();
+        Array.prototype.reverse.call( buffer.getChannelData(0) );
+        Array.prototype.reverse.call( buffer.getChannelData(1) );
+        source.buffer = buffer;
+    });
+});
+
+reverseSlider.addEventListener('input', function() {
+  const speed = parseFloat(reverseSlider.value || 0);
+  reverseValue.textContent = speed.toFixed(2);
+
+  // map the slider to forward / reverse playback
+  // 0 => normal, 1 => reverse at 1x, 2 => reverse at 2x
+  const rate = speed === 0 ? 1 : -Math.abs(speed);
+
+  if (fileinput) {
+    fileinput.playbackRate = rate;
+    fileinput.preservesPitch = false;
+  }
+
+  if (backwardsjono) {
+    backwardsjono.playbackRate = rate;
+    backwardsjono.preservesPitch = false;
+  }
+});
 
 
 
