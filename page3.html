@@ -381,6 +381,8 @@ title="back to the start">
 </div>
 
 <script>
+
+
 function makeDistortionCurve(k = 50) {
   const nSamples = 44100;
   const curve = new Float32Array(nSamples);
@@ -448,6 +450,7 @@ async function exportCombinedMix() {
     const buffers = await Promise.all(audioEls.map(async (audio) => {
       if (!audio.src) return null;
       const response = await fetch(audio.src);
+      if (!response.ok) return null;
       const arrayBuffer = await response.arrayBuffer();
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const decoded = await context.decodeAudioData(arrayBuffer.slice(0));
@@ -460,7 +463,11 @@ async function exportCombinedMix() {
 
     const sampleRate = 44100;
     const maxLength = Math.max(...valid.map(({ decoded }) => decoded.length));
-    const offline = new OfflineAudioContext(2, Math.ceil(maxLength / sampleRate * sampleRate) + sampleRate, sampleRate);
+    const totalLength = Math.ceil((maxLength + sampleRate) / sampleRate) * sampleRate;
+    const offline = new OfflineAudioContext(2, totalLength, sampleRate);
+    const master = offline.createGain();
+    master.gain.value = 1;
+    master.connect(offline.destination);
 
     valid.forEach(({ audio, decoded }) => {
       const source = offline.createBufferSource();
@@ -476,7 +483,8 @@ async function exportCombinedMix() {
       filter.Q.value = 1;
 
       const shaper = offline.createWaveShaper();
-      shaper.curve = makeDistortionCurve((parseFloat(document.getElementById('driveRange')?.value || 0)) * 100);
+      const drive = parseFloat(document.getElementById('driveRange')?.value || 0);
+      shaper.curve = makeDistortionCurve(drive * 100);
 
       const convolver = offline.createConvolver();
       const convolverGain = offline.createGain();
@@ -498,15 +506,15 @@ async function exportCombinedMix() {
       source.connect(filter);
       filter.connect(shaper);
       shaper.connect(gain);
-      gain.connect(offline.destination);
+      gain.connect(master);
 
       source.connect(convolver);
       convolver.connect(convolverGain);
-      convolverGain.connect(offline.destination);
+      convolverGain.connect(master);
 
       source.connect(delay);
       delay.connect(delayGain);
-      delayGain.connect(offline.destination);
+      delayGain.connect(master);
 
       source.start(0);
     });
@@ -556,8 +564,7 @@ if (downloadBtn) {
 
 
 
-\
-
+<!-- uhdwusajsdahvfadh
    request = new XMLHttpRequest();
 reverseSlider.open('GET', fileinput, true);
 reverseSlider.open('GET', backwardsjono, true);
@@ -588,4 +595,6 @@ reverseSlider.addEventListener('input', function() {
     backwardsjono.playbackRate = rate;
     backwardsjono.preservesPitch = false;
   }
-});
+});-->
+
+   
