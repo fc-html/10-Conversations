@@ -17,6 +17,15 @@ z-index: 9999;
 }
 
 
+
+#buttontop3 {
+
+         background-color: hsl(336, 100%, 50%);
+    font-size: large;
+     color: black;
+}
+
+
 #button1 {
     background-color: rgb(0, 144, 254);
     font-size: large;
@@ -25,7 +34,7 @@ z-index: 9999;
 
 
 #downloadBtn {
-    background-color: rgb(0, 254, 224);
+
     font-size: medium;
      color: black;
 }
@@ -109,7 +118,7 @@ margin-bottom: auto;
 }
 
 #fileButton {
-display:
+
 }
 
 #fileLabel {
@@ -141,6 +150,27 @@ border: dashed 2px #72716c;
 }
 
 
+#volumeslider0 {
+position: relative;
+bottom: 22px;
+width: 20%;
+height: 7px;
+}
+
+#volumeslider1 {
+position: relative;
+bottom: 22px;
+width: 20%;
+height: 7px;
+}
+
+#volumeslider2 {
+ position: relative;
+bottom: 22px;
+width: 20%;
+height: 7px;
+
+}
 
 #pitchRange {
 width: 70%;
@@ -174,6 +204,7 @@ height: 7px;
 
 
 #reverseRange {
+    display: none;
 width: 70%;
 height: 7px;
 }
