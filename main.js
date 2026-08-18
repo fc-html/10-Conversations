@@ -44,8 +44,6 @@ pauseButton.addEventListener("click", () => {
     audio.pause
 });
 
-
-
 //reverb thing 
 
 
